@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class RegisterController extends Controller
 {
@@ -35,7 +36,13 @@ class RegisterController extends Controller
 
         $user = $this->create($request);
 
-        return redirect('/'); // Change the redirect path as needed
+        Auth::login($user); // Log the user in
+
+        if ($user->role == 'psikolog') {
+            return redirect()->intended('/dashboard'); // Redirect psikolog to dashboard
+        }
+
+        return redirect()->intended('/'); // Redirect other roles to home
     }
 
     /**
@@ -63,7 +70,7 @@ class RegisterController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \App\Models\User
      */
-        protected function create(Request $request)
+    protected function create(Request $request)
     {
         $imagePath = null;
 
